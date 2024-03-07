@@ -6,14 +6,24 @@ public class Encoder {
     private final Map<Integer, Character> indexCharMap = new HashMap<>();
     private final Map<Character, Integer> charIndexMap = new HashMap<>();
     private int offset = 0;
-    private final Random random = new Random(12345);
+    private final Random random;
 
-    public Encoder() {
-        setupIndexValueMap();
+    /**
+     * Constructor for Encoder object.
+     */
+    public Encoder(int seed) {
+        random = new Random(seed);
+        setupIndexCharMap();
         setupValueIndexMap();
         chooseOffset();
     }
 
+    /**
+     * Encode a plainText string.
+     *
+     * @param plainText Original plainText string.
+     * @return Encoded string.
+     */
     public String encodeString(String plainText) {
         char[] characters = plainText.toCharArray();
         StringBuilder stringBuilder = new StringBuilder();
@@ -23,6 +33,12 @@ public class Encoder {
         return stringBuilder.toString();
     }
 
+    /**
+     * Decode an encoded string into the original string.
+     *
+     * @param encodedText Encoded string.
+     * @return Original string.
+     */
     public String decodeString(String encodedText) {
         char[] characters = encodedText.toCharArray();
         StringBuilder stringBuilder = new StringBuilder();
@@ -32,10 +48,19 @@ public class Encoder {
         return stringBuilder.toString();
     }
 
+    /**
+     * Choose random offset amount from original character.
+     */
     private void chooseOffset() {
-        this.offset = random.nextInt(indexCharMap.size());
+        offset = random.nextInt(indexCharMap.size());
     }
 
+    /**
+     * Get offset character from offset character.
+     *
+     * @param plainTextCharacter Original character.
+     * @return Offset character encoded from original character.
+     */
     private char getOffsetCharacter(char plainTextCharacter) {
         if (!charIndexMap.containsKey(plainTextCharacter)) {
             return plainTextCharacter;
@@ -44,6 +69,12 @@ public class Encoder {
         return indexCharMap.get(offsetIndex);
     }
 
+    /**
+     * Get offset character index from original index.
+     *
+     * @param plainTextIndex Index of original character.
+     * @return Index of offset character.
+     */
     private int getOffsetIndex(int plainTextIndex) {
         int offsetIndex = plainTextIndex + offset;
         if (offsetIndex >= indexCharMap.size()) {
@@ -52,6 +83,12 @@ public class Encoder {
         return offsetIndex;
     }
 
+    /**
+     * Get original character from offset character.
+     *
+     * @param offsetCharacter Offset character encoded from original character.
+     * @return Original character.
+     */
     private char getPlainTextCharacter(char offsetCharacter) {
         if (!charIndexMap.containsKey(offsetCharacter)) {
             return offsetCharacter;
@@ -60,6 +97,12 @@ public class Encoder {
         return indexCharMap.get(plainTextIndex);
     }
 
+    /**
+     * Get original index from offset character index.
+     *
+     * @param offsetIndex Index of offset character.
+     * @return Index of original character.
+     */
     private int getPlainTextIndex(int offsetIndex) {
         int plainTextIndex = offsetIndex - offset;
         if (plainTextIndex < 0) {
@@ -68,7 +111,10 @@ public class Encoder {
         return plainTextIndex;
     }
 
-    private void setupIndexValueMap() {
+    /**
+     * Simple setup method for populating reference table with indexes and corresponding characters.
+     */
+    private void setupIndexCharMap() {
         indexCharMap.put(0, 'A');
         indexCharMap.put(1, 'B');
         indexCharMap.put(2, 'C');
@@ -115,6 +161,9 @@ public class Encoder {
         indexCharMap.put(43, '/');
     }
 
+    /**
+     * Simple setup method for populating reference table with characters and corresponding indexes.
+     */
     private void setupValueIndexMap() {
         for (int key : indexCharMap.keySet()) {
             charIndexMap.put(indexCharMap.get(key), key);
